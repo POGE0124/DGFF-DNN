@@ -1,0 +1,165 @@
+%% *********************训练斜率数据自动编码器网络*********************************
+%%%%%%%%%%%创建自动编码器的第一隐层%%%%%%%%%%%%%%%%%%%%
+net4=feedforwardnet(hidden.num1);%建立第一隐层网络
+         net4.name = 'Autoencoder';
+         net4.layers{1}.name = 'Encoder'; 
+         net4.layers{2}.name = 'Decoder';
+         net4.layers{1}.initFcn = 'initwb';
+         net4.layers{2}.initFcn = 'initwb';
+         net4.inputWeights{1,1}.initFcn = 'rands';
+         net4.inputWeights{2,1}.initFcn = 'rands'; 
+         net4.biases{1}.initFcn='initzero';
+         net4.biases{2}.initFcn='initzero';
+         net4.initFcn = 'initlay';  
+         net4.performFcn='mse';
+         net4.trainFcn='traingdm';%带动量的梯度下降
+         net4.layers{1}.transferFcn='tansig';
+         net4.layers{2}.transferFcn='tansig';
+         net4.trainParam.epochs=hidden.trainEpochs; %训练次数
+         net4.trainParam.mc=hidden.trainMc; %动量因子
+         net4.trainParam.lr=hidden.learnRate;%学习率
+net4=init(net4);   %初始化网络
+[net4]=train(net4,trainData_slope,trainData_slope); %训练网络  
+%提取第一隐层特征
+options.w4=net4.iw{1,1}; % 只要编码网络的权值即可
+options.b4=net4.b{1};      % 偏置等于（hidden_num1*1）
+a4=options.w4*trainData_slope+options.b4*ones(1,size(trainData_slope,2));
+feature4=tansig(a4);  %用双曲正切激活函数得到第一隐层的特征
+disp('训练斜率数据第一隐层  OK'); 
+%%%%%%%%%%%创建自动编码器的第二隐层%%%%%%%%%%%%%%%%%%%%
+net5=feedforwardnet(hidden.num2);       
+             net5.name = 'Autoencoder';
+             net5.layers{1}.name = 'Encoder';
+             net5.layers{2}.name = 'Decoder';
+             net5.layers{1}.initFcn = 'initwb';
+             net5.layers{2}.initFcn = 'initwb';
+             net5.inputWeights{1,1}.initFcn = 'rands';
+             net5.inputWeights{2,1}.initFcn = 'rands';
+             net5.biases{1}.initFcn='initzero';
+             net5.biases{2}.initFcn='initzero';
+             net5.initFcn = 'initlay';
+             net5.performFcn='mse';
+             net5.trainFcn='traingdm';       
+             net5.layers{1}.transferFcn='tansig';
+             net5.layers{2}.transferFcn='tansig';
+             net5.trainParam.epochs=hidden.trainEpochs;
+             net5.trainParam.mc=hidden.trainMc; 
+             net5.trainParam.lr=hidden.learnRate;
+net5=init(net5);
+net5=train(net5,feature4,feature4);
+%提取第二隐层特征
+options.w5=net5.iw{1,1};
+options.b5=net5.b{1};  
+a5=options.w5*feature4+options.b5*ones(1,size(trainData_slope,2));
+feature5=tansig(a5);
+disp('训练斜率数据第二隐层  OK'); 
+%%%%%%%%%%%创建自动编码器的第三隐层%%%%%%%%%%%%%%%%%%%%
+net6=feedforwardnet(hidden.num3);
+        net6.name = 'Autoencoder';
+        net6.layers{1}.name = 'Encoder';
+        net6.layers{2}.name = 'Decoder';
+        net6.layers{1}.initFcn = 'initwb';
+        net6.layers{2}.initFcn = 'initwb';
+        net6.inputWeights{1,1}.initFcn = 'rands';
+        net6.inputWeights{2,1}.initFcn = 'rands';
+        net6.biases{1}.initFcn='initzero';    
+        net6.biases{2}.initFcn='initzero';
+        net6.initFcn = 'initlay';
+        net6.performFcn='mse';
+        net6.trainFcn='traingdm'; 
+        net6.layers{1}.transferFcn='tansig';
+        net6.layers{2}.transferFcn='tansig';
+        net6.trainParam.epochs=hidden.trainEpochs;
+        net6.trainParam.mc=hidden.trainMc; 
+        net6.trainParam.lr=hidden.learnRate;
+net6=init(net6);
+net6=train(net6,feature5,feature5);
+%提取第三隐层特征
+options.w6=net6.iw{1,1};
+options.b6=net6.b{1};
+a6=options.w6*feature5+options.b6*ones(1,size(trainData_slope,2));
+options.feature6=tansig(a6);
+disp('训练斜率数据第三隐层  OK'); 
+
+%% *********************训练曲率数据自动编码器网络*********************************
+%%%%%%%%%%%创建自动编码器的第一隐层%%%%%%%%%%%%%%%%%%%%
+net7=feedforwardnet(hidden.num1);%建立第一隐层网络
+         net7.name = 'Autoencoder';
+         net7.layers{1}.name = 'Encoder'; 
+         net7.layers{2}.name = 'Decoder';
+         net7.layers{1}.initFcn = 'initwb';
+         net7.layers{2}.initFcn = 'initwb';
+         net7.inputWeights{1,1}.initFcn = 'rands';
+         net7.inputWeights{2,1}.initFcn = 'rands'; 
+         net7.biases{1}.initFcn='initzero';
+         net7.biases{2}.initFcn='initzero';
+         net7.initFcn = 'initlay';  
+         net7.performFcn='mse';
+         net7.trainFcn='traingdm';%带动量的梯度下降
+         net7.layers{1}.transferFcn='tansig';
+         net7.layers{2}.transferFcn='tansig';
+         net7.trainParam.epochs=hidden.trainEpochs; %训练次数
+         net7.trainParam.mc=hidden.trainMc; %动量因子
+         net7.trainParam.lr=hidden.learnRate;%学习率
+net7=init(net7);   %初始化网络
+[net7]=train(net7,trainData_curvature,trainData_curvature); %训练网络  
+%提取第一隐层特征
+options.w7=net7.iw{1,1}; % 只要编码网络的权值即可
+options.b7=net7.b{1};      % 偏置等于（hidden_num1*1）
+a7=options.w7*trainData_curvature+options.b7*ones(1,size(trainData_curvature,2));
+feature7=tansig(a7);  %用双曲正切激活函数得到第一隐层的特征
+disp('训练曲率数据第一隐层  OK'); 
+%%%%%%%%%%%创建自动编码器的第二隐层%%%%%%%%%%%%%%%%%%%%
+net8=feedforwardnet(hidden.num2);       
+             net8.name = 'Autoencoder';
+             net8.layers{1}.name = 'Encoder';
+             net8.layers{2}.name = 'Decoder';
+             net8.layers{1}.initFcn = 'initwb';
+             net8.layers{2}.initFcn = 'initwb';
+             net8.inputWeights{1,1}.initFcn = 'rands';
+             net8.inputWeights{2,1}.initFcn = 'rands';
+             net8.biases{1}.initFcn='initzero';
+             net8.biases{2}.initFcn='initzero';
+             net8.initFcn = 'initlay';
+             net8.performFcn='mse';
+             net8.trainFcn='traingdm';       
+             net8.layers{1}.transferFcn='tansig';
+             net8.layers{2}.transferFcn='tansig';
+             net8.trainParam.epochs=hidden.trainEpochs;
+             net8.trainParam.mc=hidden.trainMc; 
+             net8.trainParam.lr=hidden.learnRate;
+net8=init(net8);
+net8=train(net8,feature7,feature7);
+%提取第二隐层特征
+options.w8=net8.iw{1,1};
+options.b8=net8.b{1};  
+a8=options.w8*feature7+options.b8*ones(1,size(trainData_curvature,2));
+feature8=tansig(a8);
+disp('训练曲率数据第二隐层  OK'); 
+%%%%%%%%%%%创建自动编码器的第三隐层%%%%%%%%%%%%%%%%%%%%
+net9=feedforwardnet(hidden.num3);
+        net9.name = 'Autoencoder';
+        net9.layers{1}.name = 'Encoder';
+        net9.layers{2}.name = 'Decoder';
+        net9.layers{1}.initFcn = 'initwb';
+        net9.layers{2}.initFcn = 'initwb';
+        net9.inputWeights{1,1}.initFcn = 'rands';
+        net9.inputWeights{2,1}.initFcn = 'rands';
+        net9.biases{1}.initFcn='initzero';    
+        net9.biases{2}.initFcn='initzero';
+        net9.initFcn = 'initlay';
+        net9.performFcn='mse';
+        net9.trainFcn='traingdm'; 
+        net9.layers{1}.transferFcn='tansig';
+        net9.layers{2}.transferFcn='tansig';
+        net9.trainParam.epochs=hidden.trainEpochs;
+        net9.trainParam.mc=hidden.trainMc; 
+        net9.trainParam.lr=hidden.learnRate;
+net9=init(net9);
+net9=train(net9,feature8,feature8);
+%提取第三隐层特征
+options.w9=net9.iw{1,1};
+options.b9=net9.b{1};
+a9=options.w9*feature8+options.b9*ones(1,size(trainData_curvature,2));
+options.feature9=tansig(a9);
+disp('训练曲率数据第三隐层  OK'); 
